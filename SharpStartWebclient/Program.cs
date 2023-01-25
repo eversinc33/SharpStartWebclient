@@ -29,7 +29,7 @@ public class Program
     public struct EventData
     {
         [FieldOffset(0)]
-        internal UInt64 DataPointer;
+        internal UInt16 DataPointer;
         [FieldOffset(8)]
         internal uint Size;
         [FieldOffset(12)]
@@ -37,7 +37,7 @@ public class Program
     }
 
     [DllImport("Advapi32.dll", SetLastError = true)]
-    public static extern uint EventRegister(ref Guid guid, [Optional] IntPtr EnableCallback, [Optional] IntPtr CallbackContext, [In][Out] ref long RegHandle);
+    public static extern uint EventRegister(ref Guid guid, IntPtr EnableCallback, IntPtr CallbackContext, ref long RegHandle);
 
     [DllImport("Advapi32.dll", SetLastError = true)]
     public static extern unsafe uint EventWrite(long RegHandle, ref EVENT_DESCRIPTOR EventDescriptor, uint UserDataCount, EventData* UserData);
@@ -48,17 +48,15 @@ public class Program
     public static void Main(string[] args)
     {
         Guid WebClientTrigger = new Guid(0x22B6D684, 0xFA63, 0x4578, 0x87, 0xC9, 0xEF, 0xFC, 0xBE, 0x66, 0x43, 0xC7);
-
         long RegistrationHandle = 0;
-        uint status = EventRegister(ref WebClientTrigger, IntPtr.Zero, IntPtr.Zero, ref RegistrationHandle);
 
-        if (status == 0)
+        if (EventRegister(ref WebClientTrigger, IntPtr.Zero, IntPtr.Zero, ref RegistrationHandle) == 0)
         {
             EVENT_DESCRIPTOR EventDescriptor = new EVENT_DESCRIPTOR();
 
             unsafe
             {
-                uint writeOutput = EventWrite(RegistrationHandle, ref EventDescriptor, 0, null);
+                EventWrite(RegistrationHandle, ref EventDescriptor, 0, null);
                 EventUnregister(RegistrationHandle);
             }
 
