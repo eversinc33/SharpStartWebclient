@@ -45,7 +45,7 @@ public class Program
     [DllImport("Advapi32.dll", SetLastError = true)]
     public static extern uint EventUnregister(long RegHandle);
 
-    public static void Main(string[] args)
+    public static Main(string[] args)
     {
         Guid WebClientTrigger = new Guid(0x22B6D684, 0xFA63, 0x4578, 0x87, 0xC9, 0xEF, 0xFC, 0xBE, 0x66, 0x43, 0xC7);
         long RegistrationHandle = 0;
